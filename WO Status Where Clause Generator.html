@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Maximo Asset Search</title>
+  <style>
+    body {
+      font-family: 'Helvetica', Arial, sans-serif;
+      margin: 20px;
+      overflow: auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .Top {
+      width: 100%;
+      height: 40px;
+      left: 0;
+      top: 0;
+      position: absolute;
+      background: #344149;
+    }
+
+    h1 {
+      width: 100%;
+      left: 0;
+      position: absolute;
+      top: 15px;
+
+      color: #F7F7F7;
+      position: absolute;
+      text-align: left;
+      font-weight: 550;
+      word-wrap: break-word;
+      background: #B25A00;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      width: 100%;
+      left: 0;
+      color: #B25A00;
+      text-align: left;
+      font-weight: 400;
+      word-wrap: break-word;
+    }
+
+    input[type="text"] {
+      width: 25%;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+
+    main {
+      top: 1-px;
+      /* add container around this for bigger screens*/
+      width: auto;
+      height: 12px;
+      position: relative;
+      /* Change to relative positioning */
+      flex-grow: 1;
+      overflow: visible;
+      color: black;
+      font-size: 150%;
+      font-family: Inter;
+      font-weight: 400;
+      word-wrap: break-word;
+    }
+
+    .input-group {
+      margin-bottom: 10px;
+    }
+
+    .description {
+      display: block;
+      margin-top: 5px;
+      font-size: 13px;
+      color: #4b79c0;
+    }
+
+    hr {
+      border: 1px solid #ccc;
+      margin: 20px 0;
+    }
+
+    #whereClause {
+      width: 100%;
+      height: 150px;
+      font-family: monospace;
+    }
+
+    button2 {
+      /* Button for the examples */
+      border-radius: 10%;
+      width: 60px;
+      height: 60px;
+      background-color: #ccc;
+      color: black;
+      padding: 8px 12px;
+      border: none;
+      margin-right: 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    button2:hover {
+      background-color: #ccc;
+      color: #B25A00;
+    }
+
+    .question-mark {
+      display: inline-block;
+      width: 35px;
+      height: 35px;
+      background-color: #ccc;
+      border-radius: 40px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 30px;
+      position: relative;
+    }
+
+    .question-mark:hover {
+      background-color: #ccc;
+      color: #B25A00;
+    }
+
+    .smQM {
+      /* Small Question Mark */
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      background-color: #ccc;
+      border-radius: 20px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 15px;
+      position: relative;
+    }
+
+    .smQM:hover {
+      background-color: #ccc;
+      color: #B25A00;
+    }
+
+    .info-text {
+      display: none;
+      position: relative;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      width: 40%;
+      text-align: center;
+      left: 20%;
+      transform: translateX(-50%);
+      top: 5px;
+    }
+
+    .glow {
+      background-color: orange;
+    }
+
+    footer {
+      width: 100%;
+      height: 2.5%;
+      left: 0;
+      bottom: 0;
+      background: #B25A00;
+      position: fixed;
+    }
+
+    /* cheating {
+      width: 100%;
+      height: 60px;
+      left: 0;
+      bottom: 0;
+      color: #f9f9f9;
+      text-align: center;
+    } */
+  </style>
+  <div id="notification"
+    style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #64d717; padding: 20px; border: 2px solid black; font-size: 36px;color: #F7F7F7; z-index: 9999;border-radius: 15px;">
+  </div>
+  <script>
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault(); // Prevent the default behavior (e.g., new line in a text area)
+        generateWhereClause();
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' && event.shiftKey) {
+        event.preventDefault(); // Prevent the default behavior (e.g., new line in a text area)
+        copyToClipboard();
+      }
+    });
+    window.addEventListener('load', function () {
+      // Function to generate a random color from a list of colorHexList
+      function getRandomColor() {
+        const colorHexList = {
+          blue: '#0000FF',
+          purple: '#800080',
+          green: '#008000',
+          crimsonRed: '#DC143C',
+          red: '#FF0000',
+          orange: '#FFA500',
+          orangeRed: '#FF4500',
+          hotPink: '#FF69B4',
+          navyBlue: '#000080'
+        };
+        const colorNames = Object.keys(colorHexList);
+        const randomColorName = colorNames[Math.floor(Math.random() * colorNames.length)];
+        return colorHexList[randomColorName];
+      }
+      let descriptionSpan = document.querySelector('.description');
+      let textContent = descriptionSpan.textContent;
+      descriptionSpan.innerHTML = textContent
+        .split('')
+        .map(letter => `<span style="color: ${getRandomColor()}">${letter}</span>`)
+        .join('');
+    });
+
+    // Example 1 Fillout
+    function fillOutExample1() {
+      clearAllFields();
+      document.getElementById('buildings').value = '331, 3410';
+      document.getElementById('SearchDesc').value = 'CHW & PMP, HHW';
+      document.getElementById('ExSearchDesc').value = 'Aquatics, Animal';
+      document.getElementById('LegAS').value = 'CHW-PMP, N-DIS';
+      document.getElementById('ExLegAS').value = 'HHW-PMP, E-DIS';
+      // Status of checkboxes
+      document.getElementById('status_operating').checked = true;
+      document.getElementById('status_active').checked = true;
+      document.getElementById('status_decommissioned').checked = true;
+
+      generateWhereClause();
+    }
+    // Example 2 Fillout
+    function fillOutExample2() {
+      clearAllFields();
+      document.getElementById('buildings').value = '3410, 3420, 3430';
+      document.getElementById('SearchDesc').value = 'Perchloric';
+      document.getElementById('ExSearchDesc').value = '';
+      document.getElementById('LegAS').value = 'HEPA';
+      document.getElementById('ExLegAS').value = '';
+
+      generateWhereClause();
+    }
+    // Example 3 Fillout
+    function fillOutExample3() {
+      clearAllFields();
+      document.getElementById('buildings').value = '3020EMSL';
+      document.getElementById('SearchDesc').value = 'FP';
+      document.getElementById('ExSearchDesc').value = 'FP-SYS, PIPE, SPRINKLER, DMP, ENC';
+
+      // Status of checkboxes
+      document.getElementById('status_operating').checked = true;
+      document.getElementById('status_active').checked = true;
+      document.getElementById('status_decommissioned').checked = true;
+      generateWhereClause();
+    }
+
+    // Clear all Feilds and checkboxes
+    function clearAllFields() {
+      document.getElementById('buildings').value = '';
+      document.getElementById('SearchDesc').value = '';
+      document.getElementById('ExSearchDesc').value = '';
+      document.getElementById('LegAS').value = '';
+      document.getElementById('ExLegAS').value = '';
+
+      // Uncheck all status checkboxes
+      document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = false;
+      });
+      document.getElementById('whereClause').value = '';
+    }
+  </script>
+</head>
+
+<body>
+  <!-- header -->
+  <div class="Top">
+    <h1>COMPLOC Where Clause Generator
+    </h1>
+  </div>
+  <br><br><br><br><br><br>
+  <!-- Main Content -->
+  <div class="main">
+    <button2 type="button" onclick="fillOutExample1()">Example 1</button2>
+    <button2 type="button" onclick="fillOutExample2()">Example 2</button2>
+    <button2 type="button" onclick="fillOutExample3()">Example 3</button2>
+    <button2 type="button" onclick="clearAllFields()">Clear</button2>
+    <br><br>
+    <form id="searchForm">
+      <!-- Buildings -->
+      <div class="input-group">
+        <label for="buildings"><strong>Building(s):</strong></label>
+        <input type="text" id="buildings" placeholder="Enter building number(s) (e.g. 331, 3410)">&#160
+        <span class="question-mark" id="questionMark1">?</span>
+        <div class="info-text" id="infoText1">Enter building number(s) here. <strong>To enter multiple buildings,
+            separate each building by a comma. </strong>
+          Be sure to check in Maximo for the correct naming format of each building.</div>
+      </div>
+      <!-- SerchDesc -->
+      <div class="input-group">
+        <label for="SearchDesc"><strong>COMPLOC Title Search:</strong></label>
+        <input type="text" id="SearchDesc"
+          placeholder="Enter text for searching description (e.g. CHW & PMP, HHW)">&#160
+        <span class="question-mark" id="questionMark2">?</span>
+        <div class="info-text" id="infoText2">Search in the 'Description' field in Maximo here. <strong>Commas will act
+            as an OR operator, while the "&" symbol will act as an AND operator. </strong>
+          <br><br><strong>Example:</strong> If you set "331, 3410" as the buildings, along with "CHW & PMP, HHW" in the
+          'Title Search', Maximo will look for...
+          331 descriptions with "CHW <u>&</u> PMP" <u>OR</u> "HHW" and 3410 with "CHW <u>&</u> PMP" <u>OR</u> "HHW".
+        </div>
+      </div>
+      <!-- Exclude terms in description -->
+      <div class="input-group">
+        <label for="ExSearchDesc"><strong>EXCLUDE Terms in the COMPLOC Title:</strong> </label>
+        <input type="text" id="ExSearchDesc"
+          placeholder="Enter terms to exclude in the description (e.g. Aquatics, Animal)">&#160
+        <span class="question-mark" id="questionMark3">?</span>
+        <div class="info-text" id="infoText3">Enter in terms to EXCLUDE in the 'Description' field. <strong>To specify
+            multiple terms to exclude, separate the terms or phrases with commas</strong>
+          <br><br><strong>Example:</strong> If you input "Aquatics, Animal", your search will <strong>not</strong>
+          include "Aquatics" <u>AND</u> "Animals" in the description.
+        </div>
+      </div>
+      <hr> <!-- Header Line -->
+      <!-- Legasy Asset Number -->
+      <div class="input-group">
+        <label for="LegAS"><strong>Legacy Asset Number Search:</strong></label>
+        <input type="text" id="LegAS" placeholder="Enter asset numbers to search for (e.g. CHW-PMP, N-DIS)">&#160
+        <span class="question-mark" id="questionMark4">?</span>
+        <div class="info-text" id="infoText4">
+          Search in the 'Legacy Asset' field in Maximo. <strong>To enter multiple Legacy Assets, separate each by a comma. </strong> 
+          <br><br><strong>Example:</strong> If you input "CHW-PMP, N-DIS", your search will include Asset Numbers with "CHW-PMP" <u>OR</u> "N-DIS" </div>
+      </div>
+      <!-- Exclude from Legacy Asset -->
+      <div class="input-group">
+        <label for="ExLegAS"><strong>EXCLUDE from Legacy Asset:</strong> </label>
+        <input type="text" id="ExLegAS" placeholder="Enter asset numbers to exclude (e.g. HHW-PMP, E-DIS)">&#160
+        <span class="question-mark" id="questionMark5">?</span>
+        <div class="info-text" id="infoText5">
+          Enter in terms to EXCLUDE in the 'Legacy Asset field.' <strong>To specify multiple terms to exclude, 
+            separate the terms or phrases with commas</strong>
+            <br><br><strong>Example:</strong> If you input "HHW-PMP, E-DIS", your search will <strong>not</strong>
+          include "HHW-PMP" <u>AND</u> "E-DIS" in the 'Legacy Asset Field'</div>
+      </div>
+      <hr> <!-- Header Line -->
+      <!-- Status Checkboxes -->
+      <div class="input-group">
+        <label for="statusCheckboxes"><strong>Status(es):</strong></label><br>
+        <span class="description">Leave this blank to search for all statuses. Otherwise, select the statuses you
+          need.</span>
+        <label for="status_operating">
+          <input type="checkbox" id="status_operating" value="OPERATING"> OPERATING
+        </label>
+        <br>
+        <label for="status_active">
+          <input type="checkbox" id="status_active" value="ACTIVE"> ACTIVE
+        </label>
+        <br>
+        <label for="status_decommissioned">
+          <input type="checkbox" id="status_decommissioned" value="DECOMMISSIONED"> DECOMMISSIONED
+        </label>
+        <br>
+        <label for="status_retired">
+          <input type="checkbox" id="status_retired" value="RETIRED"> RETIRED
+        </label>
+        <br>
+        <label for="status_inactive">
+          <input type="checkbox" id="status_inactive" value="INACTIVE"> INACTIVE
+        </label>
+        <br>
+        <label for="status_not_ready">
+          <input type="checkbox" id="status_not_ready" value="NOT READY"> NOT READY
+        </label>
+        <br>
+        <label for="status_disposed">
+          <input type="checkbox" id="status_disposed" value="DISPOSED"> DISPOSED
+        </label>
+        <br>
+        <label for="status_prepare_for_use">
+          <input type="checkbox" id="status_prepare_for_use" value="PREPARE FOR USE"> PREPARE FOR USE
+        </label>
+        <br>
+        <label for="status_storage">
+          <input type="checkbox" id="status_storage" value="STORAGE"> STORAGE
+        </label>
+        <br>
+        <label for="status_unoccupied">
+          <input type="checkbox" id="status_unoccupied" value="UNOCCUPIED"> UNOCCUPIED
+        </label>
+        <br>
+        <label for="status_draft">
+          <input type="checkbox" id="status_draft" value="DRAFT"> DRAFT
+        </label>
+      </div>
+
+      <!--    <hr> Header Line --> 
+
+      <!-- System Checkboxes ; Uncomment out if we ever do decide to include the Search field
+      <div class="input-group">
+        <label for="systemCheckboxes"><strong>Systems(s):</strong></label><br>
+        <span class="description">Leave this blank to search for all systems. Otherwise, select the systems you
+          need.</span>
+        <label for="system_ARCH">
+          <input type="checkbox" id="system_ARCH" value="ARCH"> ARCH (Architectural Systems)
+        </label>
+        <br>
+        <label for="system_ELEC">
+          <input type="checkbox" id="system_ELEC" value="ELEC"> ELEC (Electrical System)
+        </label>
+        <br>
+        <label for="system_FIREZONE">
+          <input type="checkbox" id="system_FIREZONE" value="FIREZONE"> FIREZONE (Firezone System)
+        </label>
+        <br>
+        <label for="system_HVAC">
+          <input type="checkbox" id="system_HVAC" value="HVAC"> HVAC (Heating, Ventilation, and Cooling Systems)
+        </label>
+        <br>
+        <label for="system_IOPS">
+          <input type="checkbox" id="system_IOPS" value="IOPS"> IOPS (IOPS System)
+        </label>
+        <br>
+        <label for="system_MECH">
+          <input type="checkbox" id="system_MECH" value="MECH"> MECH (Mechanical System)
+        </label>
+        <br>
+        <label for="system_PHYSICAL">
+          <input type="checkbox" id="system_PHYSICAL" value="PHYSICAL"> PHYSICAL (Physical System)
+        </label>
+        <br>
+        <label for="system_PIPE">
+          <input type="checkbox" id="system_PIPE" value="PIPE"> PIPE (Piping Systems)
+        </label>
+        <br>
+        <label for="system_POTOUR">
+          <input type="checkbox" id="system_POTOUR" value="POTOUR"> POTOUR (Power Operator Tours)
+        </label>
+        <br>
+        <label for="system_WSH">
+          <input type="checkbox" id="system_WSH" value="WSH"> WSH (Worker Safety and Health Systems)
+        </label>
+      </div> -->
+
+      <hr> <!-- Header Line -->
+
+      <!-- Button to generate Where Clause -->
+      <button type="button" onclick="generateWhereClause()">Generate Where Clause</button>
+      <span class="smQM" id="questionMark6">?</span>
+      <div class="info-text" id="infoText6"> Click "Generate Where Clause" to generate the Where Clause below. You can
+        also press
+        <strong>Enter</strong> on your Keyboard
+      </div>&#160
+      <h2>Generated Where Clause:</h2>
+      <textarea id="whereClause" readonly></textarea>
+
+      <button onclick="copyToClipboard()">Copy to Clipboard</button>&#160
+      <span class="smQM" id="questionMark7">?</span>
+      <div class="info-text" id="infoText7"> Click "Copy to Clipboard" to copy the Generated Where Clause above. You can
+        also press
+        <strong>Shift + Enter</strong> on your Keyboard
+      </div>
+
+    </form>
+    <br>
+    <footer></footer>
+  </div>
+  <script>
+    window.addEventListener('load', function () {
+      let questionMarks = document.querySelectorAll('.question-mark, .smQM'); // Include both regular and small question marks
+      let infoTexts = document.querySelectorAll('.info-text');
+      let activeIndex = null;
+
+      questionMarks.forEach(function (questionMark, index) {
+        questionMark.addEventListener('click', function () {
+          if (activeIndex !== null) {
+            infoTexts[activeIndex].style.display = 'none';
+            questionMarks[activeIndex].classList.remove('glow');
+          }
+
+          if (activeIndex !== index) {
+            infoTexts[index].style.display = 'block';
+            questionMarks[index].classList.add('glow');
+            activeIndex = index;
+          } else {
+            activeIndex = null;
+          }
+        });
+      });
+    });
+    window.addEventListener('load', function () {
+      let questionMarks = document.querySelectorAll('.question-mark' || ".smQM");
+      let infoTexts = document.querySelectorAll('.info-text');
+      let activeIndex = null;
+
+      questionMarks.forEach(function (questionMark, index) {
+        questionMark.addEventListener('click', function () {
+          if (activeIndex !== null) {
+            infoTexts[activeIndex].style.display = 'none';
+            questionMarks[activeIndex].classList.remove('glow');
+          }
+
+          if (activeIndex !== index) {
+            infoTexts[index].style.display = 'block';
+            questionMarks[index].classList.add('glow');
+            activeIndex = index;
+          } else {
+            activeIndex = null;
+          }
+        });
+      });
+    });
+    function generateWhereClause() {
+      // Retrive valuves from the inputs
+      function sanitizeInput(input) {
+        // Remove extra spaces, leading/trailing commas, and invalid characters
+        return input
+          .replace(/\s+/g, ' ')       // Remove extra spaces
+          .replace(/(^,|,$)/g, '')    // Remove leading/trailing commas
+          .replace(/[\^*~.!@#]/g, '')  // Remove invalid characters (^ * ~ . ! @ #)
+          .split(',')
+          .filter(item => item.trim() !== '') // Remove empty items after splitting
+          .join(',');
+      }
+
+      const buildings = sanitizeInput(document.getElementById('buildings').value);
+      const SearchDesc = sanitizeInput(document.getElementById('SearchDesc').value);
+      const ExSearchDesc = sanitizeInput(document.getElementById('ExSearchDesc').value);
+      const LegAS = sanitizeInput(document.getElementById('LegAS').value);
+      const ExLegAS = sanitizeInput(document.getElementById('ExLegAS').value);
+
+
+      const selectedStatuses = [];
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+      checkboxes.forEach(checkbox => {
+        selectedStatuses.push(checkbox.value);
+      });
+
+      // Start of creating the Where Clause
+      // Site ID condition
+      let whereClause = '(siteid = \'PNNLSITE\')\n';
+
+      // Series of If Statements that change depending on the currently input 
+      if (buildings && SearchDesc) {
+        const buildingNumbers = buildings.split(',').map(item => item.trim());
+        let descriptionSearch = '';
+        buildingNumbers.forEach(num => {
+          descriptionSearch += SearchDesc.split(',').map(term => `${num} ~ ${term}`).join(' | ') + ' | ';
+        });
+        descriptionSearch = descriptionSearch.slice(0, -3); // Remove the trailing ' | '
+        whereClause += `and contains(description, '${descriptionSearch}')\n`;
+        whereClause += '\n';
+      }
+
+      if (buildings && !SearchDesc) {
+        const buildingNumbers = buildings.split(',').map(item => item.trim());
+        let descriptionSearch = '';
+        buildingNumbers.forEach(num => {
+          descriptionSearch += SearchDesc.split(',').map(term => `${num}`).join(' | ') + ' | ';
+        });
+        descriptionSearch = descriptionSearch.slice(0, -3); // Remove the trailing ' | '
+        whereClause += `and contains(description, '${descriptionSearch}')\n`;
+        whereClause += '\n';
+      }
+
+      if (!buildings && SearchDesc) {
+        const buildingNumbers = buildings.split(',').map(item => item.trim());
+        let descriptionSearch = '';
+        buildingNumbers.forEach(num => {
+          descriptionSearch += SearchDesc.split(',').map(term => `${term}`).join(' | ') + ' | ';
+        });
+        descriptionSearch = descriptionSearch.slice(0, -3); // Remove the trailing ' | '
+        whereClause += `and contains(description, '${descriptionSearch}')\n`;
+        whereClause += '\n';
+      }
+
+      // Legacy Asset Number Search condition
+      if (LegAS) {
+        // Split the legacy asset search terms and trim each term
+        const legacyAssetTerms = LegAS.split(',').map(term => term.trim());
+
+        if (legacyAssetTerms.length === 1) {
+          // If only one term, use 'and'
+          whereClause += `and (legacyassetnum like '%${legacyAssetTerms[0]}%')\n`;
+        } else {
+          // If more than one term, use 'and' for the first term, and 'or' for the rest
+          whereClause += `and ((legacyassetnum like '%${legacyAssetTerms[0]}%')\n`;
+          for (let i = 1; i < legacyAssetTerms.length; i++) {
+            whereClause += `    or (legacyassetnum like '%${legacyAssetTerms[i]}%'))\n`;
+          }
+        }
+        whereClause += '\n';
+      }
+
+      // Exclude Terms in Description condition
+      if (ExSearchDesc) {
+        whereClause += 'and (';
+        const excludedTerms = ExSearchDesc.split(',').map(item => item.trim());
+        whereClause += excludedTerms.map(term => `description not like '%${term}%'`).join('\n    and ');
+        whereClause += ')\n';
+        whereClause += '\n';
+      }
+
+      // Exclude Terms from Legacy Asset condition
+      if (ExLegAS) {
+        whereClause += 'and (';
+        const excludedFromLegacy = ExLegAS.split(',').map(item => item.trim());
+        whereClause += excludedFromLegacy.map(term => `legacyassetnum not like '%${term}%'`).join('\n    and ');
+        whereClause += ')\n';
+        whereClause += '\n';
+      }
+
+      // Statuses search condition
+      if (selectedStatuses.length > 0) {
+        whereClause += 'and (';
+        whereClause += selectedStatuses.map(status => `upper(status) = '${status}'`).join('\n    or ');
+        whereClause += ')\n'
+      }
+
+      // Set the generated where clause to the text area
+      document.getElementById('whereClause').value = whereClause;
+
+      const notification = document.getElementById('notification');
+      notification.textContent = 'Where Clause Generated!';
+      notification.style.display = 'block';
+      // Automatically hide the notification after a few seconds
+      setTimeout(function () {
+        notification.style.display = 'none';
+      }, 1000); // 1000 milliseconds (1 seconds)
+    }
+
+    //Copy to clipboard function
+    function copyToClipboard() {
+      event.preventDefault();
+      const textarea = document.getElementById('whereClause');
+      textarea.select();
+      document.execCommand('copy');
+      const notification = document.getElementById('notification');
+      notification.textContent = 'Where Clause copied to Clipboard!';
+      notification.style.display = 'block';
+
+      // Automatically hide the notification after a few seconds
+      setTimeout(function () {
+        notification.style.display = 'none';
+      }, 3000); // 3000 milliseconds (3 seconds)
+    }
+
+
+  </script>
+
+</body>
+
+</html>
