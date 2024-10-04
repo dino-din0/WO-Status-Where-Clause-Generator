@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <!--This was created by North Campus Interns-->
+
 <head>
   <title>Maximo WO Report Generation Tool</title>
   <style>
@@ -130,7 +131,7 @@
       border: 1px solid black;
       font-weight: bold;
       text-align: center;
-      margin-right: calc((2% - (4 * 1px)) / 2); 
+      margin-right: calc((2% - (4 * 1px)) / 2);
       margin-bottom: calc((1% - (4 * 1px)) / 2);
     }
 
@@ -278,7 +279,8 @@
     <div>
       <h2><strong><u>Speedy Actions</u></strong></h2>
     </div>
-    <i>Buttons are for quick speedy action. If you want more then move to custom search</i>
+    <i>Buttons are for quick speedy action. If you want to modify the search, move to the <u>Custom Search</u>
+      section! MAKE THIS DESCRIPTION BETTER. CUSTOM MONTHS BUTTONS ONLY CHANGES THE DATES, BUT NOT ANYTHING ELSE BELOW. AND THEN IN THE CUSTOMIZE SEARCH AREA, YOU NEED TO PRESS CREATE WHERE CLAUSE/ENTER MANUALLY IF YOU WANT TO MAKE A WHERE CLAUSE USING LA CUSTOM DATE... </i>
     <br>
     <br>
 
@@ -315,9 +317,9 @@
     <div class="input-group">
       <label for="core_teamCheckboxes"><strong>Core Team</strong></label><br>
       <span><i>Select the Core Teams
-      </i></span><br>
+        </i></span><br>
       <label for="300A_CT">
-        <input type="checkbox" id="300A_CT" value="PSF2CT" class="teams" > 300 Area Core Team
+        <input type="checkbox" id="300A_CT" value="PSF2CT" class="teams"> 300 Area Core Team
       </label>
       <br>
       <label for="PSF_CT">
@@ -350,11 +352,11 @@
       <br>
       <!-- SOUTH CORE TEAMS INCLUDE CFCT, GSICT, PFCT, RFCT3, UFCT; THERE ARE OTHER CORE TEAMS TOO -->
     </div>
- 
+
     <div class="input-group">
       <label for="wtlCheckboxes"><strong>Work Team Leads</strong></label><br>
       <span><i>Leave this blank to search all WTLs. Otherwise, select the WTLs you need
-      </i></span><br>
+        </i></span><br>
       <label for="Josh_Henn">
         <input type="checkbox" id="Josh_Henn" value="913053" class="leads"> Josh Henn (300A)
       </label>
@@ -365,7 +367,7 @@
       <br>
       <label for="Joe_Gill">
         <input type="checkbox" id="Joe_Gill" value="907047" class="leads"> Joe Gill (300A Fab)
-      </label> 
+      </label>
       <br>
       <label for="Jessey_Brown">
         <input type="checkbox" id="Jessey_Brown" value="3P292" class="leads"> Jessey Brown (Power OP)
@@ -373,18 +375,18 @@
       <br>
       <label for="Trevor_King">
         <input type="checkbox" id="Trevor_King" value="903079" class="leads"> Trevor King (PSF)
-      </label> 
+      </label>
       <br>
       <label for="custom_wtl">
-        <input type="checkbox" class="ccustom" id="custom_wtl"> Custom WTL (Enter Valid PNNLID) <input type="text" class="custom" id="name-input"
-          placeholder="PNNL ID Only" enabled>
+        <input type="checkbox" class="ccustom" id="custom_wtl"> Custom WTL (Enter Valid PNNLID) <input type="text"
+          class="custom" id="name-input" placeholder="PNNL ID Only" enabled>
       </label>
     </div>
-  
+
     <div class="input-group">
       <label for="spec_craftCheckboxes"><strong>Power Operator & Air Balance Craft in Search</strong></label><br>
       <span><i>Provides the option to exclude the Power Operator & Air Balance Craft
-      </i></span><br>
+        </i></span><br>
       <label for="powerOp_airBal">
         <input type="checkbox" id="powerOp_airBal" value="yes" class="airbal"> Do not include
       </label>
@@ -393,7 +395,7 @@
     <div class="input-group">
       <label for="months_weekly_WO"><strong>Include the month's weekly WOs</strong></label><br>
       <span><i>Provides the option to only search all the PMs due in that month alone
-      </i></span><br>
+        </i></span><br>
       <label for="weekly">
         <input type="checkbox" id="weekly" value="yes" class="weekly"> Yes, include
       </label>
@@ -401,8 +403,8 @@
 
     <div class="input-group">
       <label for="History_Checkboxes"><strong>Phase of the WO</strong></label><br>
-      <span><i> N/A: Excludes closed WO 1: Only closed and canceled WO 
-      </i></span><br>
+      <span><i> N/A: Excludes closed WO 1: Only closed and canceled WO
+        </i></span><br>
       <label for="History">
         <input type="checkbox" id="History" value="yes" class="History"> 1
       </label>
@@ -417,7 +419,7 @@
     <div class="input-group">
       <label for="statusCheckboxes"><strong>Phase(s):</strong></label><br>
       <span class="description"><i>Leave this blank to search for all phases. Otherwise, select the phases you
-        need.</i></span>
+          need.</i></span>
       <label for="status_be_review">
         <input type="checkbox" id="status_be_review" value="BE REVIEW" class="status"> BE REVIEW
       </label>
@@ -472,18 +474,20 @@
     <!-- Button to generate Where Clause -->
     <h3>Generated Where Clause:</h3>
     <div>
-    <button3 type="button" onclick="generateWhereClause()">Generate Where Clause</button3>
-    <span class="smQM" id="questionMark1">?</span>
+      <button3 type="button" onclick="generateWhereClause()">Generate Where Clause</button3>
+      <span class="smQM" id="questionMark1">?</span>
     </div>
-    <div class="info-text" id="infoText1"> Click "Generate Where Clause" to generate the Where Clause below. You can also press <strong>Enter</strong> on your Keyboard
+    <div class="info-text" id="infoText1"> Click "Generate Where Clause" to generate the Where Clause below. You can
+      also press <strong>Enter</strong> on your Keyboard
     </div>
     <br>
     <textarea id="whereClause" readonly></textarea>
     <div>
-    <button3 onclick="copyToClipboard()">Copy to Clipboard</button3>
-    <span class="smQM" id="questionMark2">?</span>
+      <button3 onclick="copyToClipboard()">Copy to Clipboard</button3>
+      <span class="smQM" id="questionMark2">?</span>
     </div>
-    <div class="info-text" id="infoText2"> Click "Copy to Clipboard" to copy the Generated Where Clause above. You can also press <strong>Shift + Enter</strong> on your Keyboard
+    <div class="info-text" id="infoText2"> Click "Copy to Clipboard" to copy the Generated Where Clause above. You can
+      also press <strong>Shift + Enter</strong> on your Keyboard
     </div>
 
   </form>
@@ -493,97 +497,10 @@
 
   <!-- JavaScript Code for this HTML -->
   <script>
-    function pastdate() {
-      const currentDate = new Date().toISOString().slice(0, 10);
-
-      // Extract year and month components
-      const currentYear = currentDate.slice(0, 4);
-      const currentMonth = currentDate.slice(5, 7);
-
-      // Calculate the next month and year, handling rollover to the next year
-      let lastMonth = Number(currentMonth) - 1;
-      let lastYear = currentYear;
-
-      if (lastMonth == 0) {
-        lastMonth = 12;
-        lastYear = Number(currentYear) - 1;
-      }
-
-      // Pad the month with a leading zero if necessary
-      lastMonth = String(lastMonth).padStart(2, '0');
-
-      // Determine the number of days in the next month, considering leap years
-      const isLeapYear = lastYear % 4 === 0 && (lastYear % 100 !== 0 || lastYear % 400 === 0);
-      const daysInMonth = lastMonth === '02' ? 28 + isLeapYear : 30 + (lastMonth % 2); // Shorter version for month lengths
-
-      // Construct the first and last days of the next month in YYYY-MM-DD format
-      const date = {};
-      date.firstDay = `${lastYear}-${lastMonth}-01`;
-      date.lastDay = `${lastYear}-${lastMonth}-${daysInMonth}`;
-      alert(date.firstDay + " to " + date.lastDay);
-    }
-
-    function currentdate() {
-      const currentDate = new Date().toISOString().slice(0, 10);
-
-      // Extract year and month components
-      const currentYear = currentDate.slice(0, 4);
-      const currentMonth = currentDate.slice(5, 7);
-
-      // Pad the month with a leading zero if necessary
-      currentMonth = String(currentMonth).padStart(2, '0');
-
-      // Determine the number of days in the next month, considering leap years
-      const isLeapYear = currentYear % 4 === 0 && (currentYear % 100 !== 0 || currentYear % 400 === 0);
-      const daysInMonth = currentMonth === '02' ? 28 + isLeapYear : 30 + (currentMonth % 2); // Shorter version for month lengths
-
-      // Construct the first and last days of the next month in YYYY-MM-DD format
-      const date = {};
-      date.firstDay = `${currentMonth} ${currentYear}`;
-      date.lastDay = `${currentMonth} ${currentYear}`;
-      alert(date.firstDay + " to " + date.lastDay);
-    }
-
-    function nextdate() {
-      // Calculate the next month and year, handling rollover to the next year
-      let nextMonth = Number(currentMonth) + 1;
-      let nextYear = currentYear;
-      if (nextMonth > 12) {
-        nextMonth = 1;
-        nextYear = Number(currentYear) + 1;
-      }
-
-      // Pad the month with a leading zero if necessary
-      nextMonth = String(nextMonth).padStart(2, '0');
-
-      // Determine the number of days in the next month, considering leap years
-      const isLeapYear = nextYear % 4 === 0 && (nextYear % 100 !== 0 || nextYear % 400 === 0);
-      // const daysInMonth = nextMonth === '02' ? 28 + isLeapYear : 30 + (nextMonth % 2); // Shorter version for month lengths
-          switch (nextMonth) {
-        case 2:
-            daysInMonth = 28 + isLeapYear;
-            break;
-        case 4:
-        case 6:
-        case 9:
-        case 11:
-            daysInMonth = 30;
-            break;
-        default:
-            daysInMonth = 34;
-    }
-
-      // Construct the first and last days of the next month in YYYY-MM-DD format
-      const date = {};
-      date.firstDay = `${nextYear}-${nextMonth}-01`;
-      date.lastDay = `${nextYear}-${nextMonth}-${daysInMonth}`;
-      alert(date.firstDay + " to " + date.lastDay);
-    }
-
+    // Sets the currentDate
     const currentDate = new Date().toISOString().slice(0, 10);
-
-// Extract year and month components
-function clearAllFields() {
+    // Extract year and month components
+    function clearAllFields() {
       document.querySelectorAll('input[type="checkbox"].teams').forEach(checkbox => {
         checkbox.checked = false;
       });
@@ -592,10 +509,10 @@ function clearAllFields() {
         checkbox.checked = false;
       });
       document.getElementById('whereClause').value = '';
-    }      
-const currentYear = currentDate.slice(0, 4);
-const currentMonth = currentDate.slice(5, 7);
-    function check300C(){
+    }
+    const currentYear = currentDate.slice(0, 4);
+    const currentMonth = currentDate.slice(5, 7);
+    function check300C() {
       clearAllFields();
       document.getElementById('300A_CT').checked = true;
       document.getElementById('checkdate').checked = true;
@@ -605,7 +522,7 @@ const currentMonth = currentDate.slice(5, 7);
       //alert(currentyearmonth)
       document.getElementById('selectedDate').value = currentyearmonth
     }
-    function checkPSFC(){
+    function checkPSFC() {
       clearAllFields();
       document.getElementById('PSF_CT').checked = true;
       document.getElementById('checkdate').checked = true;
@@ -615,7 +532,7 @@ const currentMonth = currentDate.slice(5, 7);
       //alert(currentyearmonth)
       document.getElementById('selectedDate').value = currentyearmonth
     }
-    function check300N(){
+    function check300N() {
       clearAllFields();
       document.getElementById('300A_CT').checked = true;
       document.getElementById('checkdate').checked = true;
@@ -629,7 +546,7 @@ const currentMonth = currentDate.slice(5, 7);
       const nextyearmonth = new String(nextYear + '-' + nextMonth);
       document.getElementById('selectedDate').value = nextyearmonth
     }
-    function checkPSFN(){
+    function checkPSFN() {
       clearAllFields();
       document.getElementById('PSF_CT').checked = true;
       document.getElementById('checkdate').checked = true;
@@ -643,7 +560,7 @@ const currentMonth = currentDate.slice(5, 7);
       const nextyearmonth = new String(nextYear + '-' + nextMonth);
       document.getElementById('selectedDate').value = nextyearmonth
     }
-    function check300P(){
+    function check300P() {
       clearAllFields();
       document.getElementById('300A_CT').checked = true;
       document.getElementById('checkdate').checked = true;
@@ -657,7 +574,7 @@ const currentMonth = currentDate.slice(5, 7);
       const nextyearmonth = new String(nextYear + '-' + nextMonth);
       document.getElementById('selectedDate').value = nextyearmonth
     }
-    function checkPSFP(){
+    function checkPSFP() {
       clearAllFields();
       document.getElementById('PSF_CT').checked = true;
       document.getElementById('checkdate').checked = true;
@@ -671,7 +588,7 @@ const currentMonth = currentDate.slice(5, 7);
       const nextyearmonth = new String(nextYear + '-' + nextMonth);
       document.getElementById('selectedDate').value = nextyearmonth
     }
-    function checkcustomP(){
+    function checkcustomP() {
       document.getElementById('checkdate').checked = true;
       let nextMonth = Number(currentMonth) - 1;
       let nextYear = currentYear;
@@ -683,14 +600,14 @@ const currentMonth = currentDate.slice(5, 7);
       const nextyearmonth = new String(nextYear + '-' + nextMonth);
       document.getElementById('selectedDate').value = nextyearmonth
     }
-    function checkcustomC(){
+    function checkcustomC() {
       document.getElementById('checkdate').checked = true;
       const currentfulldate = new Date().toISOString().slice(0, 10);
       const currentyearmonth = currentfulldate.slice(0, 7);
       //alert(currentyearmonth)
       document.getElementById('selectedDate').value = currentyearmonth
     }
-    function checkcustomN(){
+    function checkcustomN() {
       document.getElementById('checkdate').checked = true;
       let nextMonth = Number(currentMonth) + 1;
       let nextYear = currentYear;
@@ -702,8 +619,6 @@ const currentMonth = currentDate.slice(5, 7);
       const nextyearmonth = new String(nextYear + '-' + nextMonth);
       document.getElementById('selectedDate').value = nextyearmonth
     }
-
-
 
     window.addEventListener('load', function () {
       let questionMarks = document.querySelectorAll('.question-mark, .smQM'); // Include both regular and small question marks
@@ -762,7 +677,7 @@ const currentMonth = currentDate.slice(5, 7);
           .split(',')
           .filter(item => item.trim() !== '') // Remove empty items after splitting
           .join(',');
-      } 
+      }
       let whereClause = `((woclass = 'WORKORDER' or woclass = 'ACTIVITY') `;
       // Good
       const selectedteamsStatuses = [];
@@ -777,12 +692,12 @@ const currentMonth = currentDate.slice(5, 7);
         whereClause += ')\n';
       }
       // Good
-     /* whereClause += 'and historyflag = 0\n';
-      whereClause += 'and istask = 0\n';
-      For another day if needed
-      */
-     //good
-     const selectedHistory = [];
+      /* whereClause += 'and historyflag = 0\n';
+       whereClause += 'and istask = 0\n';
+       For another day if needed
+       */
+      //good
+      const selectedHistory = [];
       checkboxes = document.querySelectorAll('input[type="checkbox"].History:checked');
       checkboxes.forEach(checkbox => {
         selectedHistory.push(checkbox.value);
@@ -794,7 +709,7 @@ const currentMonth = currentDate.slice(5, 7);
       };
       if (selectedHistory.length == 0) {
         whereClause += 'and ';
-        whereClause +=  `historyflag = 0`;
+        whereClause += `historyflag = 0`;
         whereClause += '\n'
       };
 
@@ -819,26 +734,26 @@ const currentMonth = currentDate.slice(5, 7);
         selectedccustomStatuses.push(checkbox.value);
       });
 
-      n=0;
+      n = 0;
 
       if (selectedleadsStatuses.length != 0) {
         whereClause += 'and ';
         whereClause += selectedleadsStatuses.map(status => `lead = '${status}'`).join(' or ');
-      // Good   
-      if (selectedccustomStatuses.length != 0) {
-        whereClause += ' or ';
-        whereClause += selectedcustomStatuses.map(status => `lead = '${status}'`).join(' or ');
-        n=1;
-      };
-        whereClause += '\n';        
+        // Good   
+        if (selectedccustomStatuses.length != 0) {
+          whereClause += ' or ';
+          whereClause += selectedcustomStatuses.map(status => `lead = '${status}'`).join(' or ');
+          n = 1;
+        };
+        whereClause += '\n';
       }
       // Good
-      if (selectedccustomStatuses.length != 0 && n==0) {
+      if (selectedccustomStatuses.length != 0 && n == 0) {
         whereClause += 'and ';
         whereClause += selectedcustomStatuses.map(status => `lead = '${status}'`).join(' or ');
         whereClause += '\n';
       };
-      n=0;
+      n = 0;
       // Good
       const selectedairbalStatuses = [];
       checkboxes = document.querySelectorAll('input[type="checkbox"].airbal:checked');
@@ -857,9 +772,9 @@ const currentMonth = currentDate.slice(5, 7);
       checkboxes.forEach(checkbox => {
         selectedWeeklyStatuses.push(checkbox.value);
       });
-      weeklyholder=0;
+      weeklyholder = 0;
       if (selectedWeeklyStatuses.length != 0) {
-        weeklyholder=1;
+        weeklyholder = 1;
       }
 
       // Good
@@ -878,88 +793,68 @@ const currentMonth = currentDate.slice(5, 7);
       const selectedtimeStatuses = [];
       checkboxes = document.querySelectorAll('input[type="month"].time');
       checkboxes.forEach(checkbox => {
-        selectedtimeStatuses.push(checkbox.value);})
-        
+        selectedtimeStatuses.push(checkbox.value);
+      })
+
       const selectedcheckdateStatuses = [];
       checkboxes = document.querySelectorAll('input[type="checkbox"].checkdate:checked');
       checkboxes.forEach(checkbox => {
-        selectedcheckdateStatuses.push(checkbox.value);})
+        selectedcheckdateStatuses.push(checkbox.value);
+      })
 
-      if (selectedcheckdateStatuses != 0) {
-        
-        const selecteddate = String(selectedtimeStatuses);
-        //type="month" min="2017-01" max="2030-12" id="selectedDate" name="selectedDate" class="time">
-// Extract year and month components
-//alert(selecteddate);
-const currentYear = selecteddate.slice(0, 4);
-const currentMonth = selecteddate.slice(5, 8);
-//alert(currentYear + currentMonth)
-// Not Needed. This doesn't do anything anyways - Commented out on Oct 3 2024
-// //Pad the month with a leading zero if necessary
-// currentMonth = String(selecteddate).padStart(2, '0');
+      if (selectedcheckdateStatuses !== 0) {
+        const selectedDate = String(selectedtimeStatuses);
+        const currentYear = selectedDate.slice(0, 4);
+        const currentMonth = selectedDate.slice(5, 7);
 
-// Determine the number of days in the next month, considering leap years
-const isLeapYear = currentYear % 4 === 0 && (currentYear % 100 !== 0 || currentYear % 400 === 0);
-// const daysInMonth = currentMonth === '02' ? 28 + isLeapYear : 30 + (currentMonth % 2); // Shorter version for month lengths
-switch (Number(currentMonth)) {
-        case 2:
+        const isLeapYear = currentYear % 4 === 0 && (currentYear % 100 !== 0 || currentYear % 400 === 0);
+
+        let daysInMonth;
+        switch (Number(currentMonth)) {
+          case 2:
             daysInMonth = 28 + isLeapYear;
             break;
-        case 4, 6, 9, 11:
+          case 4:
+          case 6:
+          case 9:
+          case 11:
             daysInMonth = 30;
             break;
-        default:
+          default:
             daysInMonth = 31;
-    }
-//alert(daysInMonth)
-// Construct the first and last days of the next month in YYYY-MM-DD format
-const date = {};
-date.firstDay = `${currentYear}-${currentMonth}-01`;
-date.lastDay = `${currentYear}-${currentMonth}-${daysInMonth}`;
-//alert(date.firstDay + " to " + date.lastDay);
-        if(weeklyholder==1){
-          let lastMonth = Number(currentMonth) - 1;
-          let lastYear = currentYear;
-          //alert(lastMonth +" and "+ lastYear);
-          if (lastMonth == 0) {
-            lastMonth = 12;
-            lastYear = lastYear - 1;
-            }
-            
-            // Pad the month with a leading zero if necessary
-            lastMonth = String(lastMonth).padStart(2, '0');
-            //alert(lastMonth)
-            // Determine the number of days in the next month, considering leap years
-            daysInlastMonth = lastMonth === '02' ? 28 + isLeapYear : 30 + (lastMonth % 2); // Shorter version for month lengths
-            //alert(daysInlastMonth);
-            daysInlastMonth=Number(daysInlastMonth)-7;
-            //alert(daysInlastMonth);
-            // Construct the first and last days of the next month in YYYY-MM-DD format
-            datepast = {};
-            datepast.firstDay = `${lastYear}-${lastMonth}-${daysInlastMonth}`;
-           // alert(datepast.firstDay);
-
-            let nextMonth = Number(currentMonth) + 1 ;
-            let nextYear = currentYear;
-            //alert(nextMonth);
-          if (nextMonth == 13) {
-            nextMonth = 1;
-            nextYear = Number(currentYear) + 1;
-            }
-            nextMonth = String(nextMonth).padStart(2, '0');
-            // Construct the first and last days of the next month in YYYY-MM-DD format
-            datepast.lastDay = `${nextYear}-${nextMonth}-07`;
-            //alert(datepast.lastDay);                        
         }
-        whereClause += 'and ';
-        if(weeklyholder==0){
-        whereClause += selectedtimeStatuses.map(status => `pmduedate >= { d '${date.firstDay}' } and pmduedate <= { d '${date.lastDay}'}`).join(' or ');}
-        else{
-        whereClause += selectedtimeStatuses.map(status => `pmduedate >= { d '${datepast.firstDay}' } and pmduedate <= { d '${datepast.lastDay}'}`).join(' or ');}
-        whereClause += '\n'
-      };
-      
-      weeklyholder=0;
+
+        const date = {
+          firstDay: `${currentYear}-${currentMonth}-01`,
+          lastDay: `${currentYear}-${currentMonth}-${daysInMonth}`
+        };
+
+        if (weeklyholder === 1) {
+          let lastMonth = Number(currentMonth) - 1;
+          let lastYear = Number(currentYear);
+
+          if (lastMonth === 0) {
+            lastMonth = 12;
+            lastYear -= 1;
+          }
+
+          lastMonth = String(lastMonth).padStart(2, '0');
+          let daysInLastMonth = lastMonth === '02' ? 28 + isLeapYear : (['04', '06', '09', '11'].includes(lastMonth) ? 30 : 31);
+          daysInLastMonth -= 7;
+
+          const datepast = {
+            firstDay: `${lastYear}-${lastMonth}-${String(daysInLastMonth).padStart(2, '0')}`,
+            lastDay: `${Number(currentYear) + (currentMonth === "12" ? 1 : 0)}-${String(Number(currentMonth) % 12 + 1).padStart(2, '0')}-07`
+          };
+
+          whereClause += `and ${selectedtimeStatuses.map(status => `pmduedate >= '{ d '${datepast.firstDay}' }' and pmduedate <= '{ d '${datepast.lastDay}' }'`).join(' or ')}\n`;
+        } else {
+          whereClause += `and ${selectedtimeStatuses.map(status => `pmduedate >= '{ d '${date.firstDay}' }' and pmduedate <= '{ d '${date.lastDay}' }'`).join(' or ')}\n`;
+        }
+
+        weeklyholder = 0;
+      }
+
       // Start of creating the Where Clause
 
       // Set the generated where clause to the text area
