@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html>
+<!--This was created by North Campus Interns-->
+<head>
+  <title>Maximo WO Report Generation Tool</title>
+  <style>
+    body {
+      font-family: 'Helvetica', Arial, sans-serif;
+      margin: 20px;
+      overflow: auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .Top {
+      width: 100%;
+      height: 40px;
+      left: 0;
+      top: 0;
+      position: absolute;
+      background: #344149;
+    }
+
+    h1 {
+      width: 100%;
+      left: 0;
+      position: absolute;
+      top: 15px;
+
+      color: #F7F7F7;
+      position: absolute;
+      text-align: left;
+      font-weight: 550;
+      word-wrap: break-word;
+      background: #B25A00;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      width: 100%;
+      left: 0;
+      color: #000000;
+      text-align: left;
+      font-weight: 450;
+      word-wrap: break-word;
+    }
+
+    h3 {
+      width: 100%;
+      left: 0;
+      color: #B25A00;
+      text-align: left;
+      font-weight: 400;
+      word-wrap: break-word;
+    }
+
+    input[type="text"] {
+      width: 25%;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+
+    main {
+      top: 1-px;
+      /* add container around this for bigger screens*/
+      width: auto;
+      height: 12px;
+      position: relative;
+      /* Change to relative positioning */
+      flex-grow: 1;
+      overflow: visible;
+      color: black;
+      font-size: 150%;
+      font-family: Inter;
+      font-weight: 400;
+      word-wrap: break-word;
+    }
+
+    .input-group {
+      margin-bottom: 10px;
+    }
+
+    .description {
+      display: block;
+      margin-top: 5px;
+      font-size: 13px;
+      color: #4b79c0;
+    }
+
+    hr {
+      border: 1px solid #ccc;
+      margin: 20px 0;
+    }
+
+    #whereClause {
+      width: 100%;
+      height: 150px;
+      font-family: monospace;
+    }
+
+    button3 {
+      width: 25%;
+      height: 12px;
+      text-align: center;
+      font-weight: bold;
+      background-color: #E5E5E5;
+      color: black;
+      padding: 8px 50px;
+      border: 1px solid black;
+      margin-right: 10px;
+      cursor: not-allowed;
+      font-size: 12px;
+    }
+
+    button3:hover {
+      background-color: #E5E5E5;
+      color: #B25A00;
+    }
+
+    button2 {
+      width: 200px;
+      height: 16px;
+      padding: .3% .75%;
+      background-color: #ccc;
+      color: black;
+      cursor: pointer;
+      font-size: 13px;
+      border: 1px solid black;
+      font-weight: bold;
+      text-align: center;
+      margin-right: calc((2% - (4 * 1px)) / 2); 
+      margin-bottom: calc((1% - (4 * 1px)) / 2);
+    }
+
+    .align-vertical {
+      display: flex;
+      flex-direction: row;
+    }
+
+    button2:hover {
+      background-color: #ccc;
+      color: #B25A00;
+    }
+
+    .question-mark {
+      display: inline-block;
+      width: 35px;
+      height: 35px;
+      background-color: #ccc;
+      border-radius: 40px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 30px;
+      position: relative;
+    }
+
+    .question-mark:hover {
+      background-color: #ccc;
+      color: #B25A00;
+    }
+
+    .smQM {
+      /* Small Question Mark */
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      background-color: #ccc;
+      border-radius: 20px;
+      text-align: center;
+      cursor: help;
+      font-size: 25px;
+      position: relative;
+    }
+
+    .smQM:hover {
+      background-color: #ccc;
+      color: #B25A00;
+    }
+
+    .info-text {
+      display: none;
+      position: relative;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      width: 40%;
+      text-align: center;
+      left: 20%;
+      transform: translateX(-50%);
+      top: 5px;
+    }
+
+    .glow {
+      background-color: orange;
+    }
+
+    footer {
+      width: 100%;
+      height: 2.5%;
+      left: 0;
+      bottom: 0;
+      background: #B25A00;
+      position: fixed;
+    }
+  </style>
+  <div id="notification"
+    style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #64d717; padding: 20px; border: 2px solid black; font-size: 36px;color: #F7F7F7; z-index: 9999;border-radius: 15px;">
+  </div>
+  <script>
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault(); // Prevent the default behavior (e.g., new line in a text area)
+        generateWhereClause();
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' && event.shiftKey) {
+        event.preventDefault(); // Prevent the default behavior (e.g., new line in a text area)
+        copyToClipboard();
+      }
+    });
+    window.addEventListener('load', function () {
+      // Function to generate a random color from a list of colorHexList
+      function getRandomColor() {
+        const colorHexList = {
+          blue: '#0000FF',
+          purple: '#800080',
+          green: '#008000',
+          crimsonRed: '#DC143C',
+          red: '#FF0000',
+          orange: '#FFA500',
+          orangeRed: '#FF4500',
+          hotPink: '#FF69B4',
+          navyBlue: '#000080'
+        };
+        const colorNames = Object.keys(colorHexList);
+        const randomColorName = colorNames[Math.floor(Math.random() * colorNames.length)];
+        return colorHexList[randomColorName];
+      }
+      let descriptionSpan = document.querySelector('.description');
+      let textContent = descriptionSpan.textContent;
+      descriptionSpan.innerHTML = textContent
+        .split('')
+        .map(letter => `<span style="color: ${getRandomColor()}">${letter}</span>`)
+        .join('');
+    });
+
+    // Clear all Feilds and checkboxes
+    function clearAllFields() {
+      document.getElementById('buildings').value = '';
+      document.getElementById('SearchDesc').value = '';
+      document.getElementById('ExSearchDesc').value = '';
+      document.getElementById('LegAS').value = '';
+      document.getElementById('ExLegAS').value = '';
+
+      // Uncheck all status checkboxes
+      document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = false;
+      });
+      document.getElementById('whereClause').value = '';
+    }
+  </script>
+</head>
+
+<body>
+  <!-- header -->
+  <div class="Top">
+    <h1>Maximo WO Report Generator</h1>
+  </div>
+  <br><br><br><br><br>
+
+  <form id="searchForm">
+    <div>
+      <h2><strong><u>Speedy Actions</u></strong></h2>
+    </div>
+    <i>Buttons are for quick speedy action. If you want more then move to custom search</i>
+    <br>
+    <br>
+
+    <!-- FIX Be sure to change the onclick actions -->
+    <div class="align-vertical">
+      <button2 type="button" onclick="check300P(); generateWhereClause()">[300 Area] Last Month's WOs</button2>
+      <button2 type="button" onclick="checkPSFP(); generateWhereClause()">[PSF] Last Month's WOs</button2>
+      <button2 type="button" onclick="checkcustomP(); generateWhereClause()">[Custom] Last Month</button2>
+    </div>
+    <div class="align-vertical">
+      <button2 type="button" onclick="check300C(); generateWhereClause()">[300 Area] Current Month's WOs</button2>
+      <button2 type="button" onclick="checkPSFC(); generateWhereClause()">[PSF] Current Month's WOs</button2>
+      <button2 type="button" onclick="checkcustomC(); generateWhereClause()">[Custom] Current Month</button2>
+    </div>
+    <div class="align-vertical">
+      <button2 type="button" onclick="check300N(); generateWhereClause()">[300 Area] Next Month's WOs</button2>
+      <button2 type="button" onclick="checkPSFN(); generateWhereClause()">[PSF] Next Month's WOs</button2>
+      <button2 type="button" onclick="checkcustomN(); generateWhereClause()">[Custom] Next Month</button2>
+    </div>
+    <div>
+      <h2><strong><u>Customize Search</u></strong></h2>
+    </div>
+
+    <p><strong>Custom Date</strong></p>
+
+    <form action="/action_page.php">
+      <input type="checkbox" id="checkdate" name="checkdate" class="checkdate">
+      <label for="selectedDate">Select a month:</label>
+      <input type="month" min="2017-01" max="2030-12" id="selectedDate" name="selectedDate" class="time" `>
+    </form>
+
+    </select>
+    <br>
+    <div class="input-group">
+      <label for="core_teamCheckboxes"><strong>Core Team</strong></label><br>
+      <span><i>Select the Core Teams
+      </i></span><br>
+      <label for="300A_CT">
+        <input type="checkbox" id="300A_CT" value="PSF2CT" class="teams" > 300 Area Core Team
+      </label>
+      <br>
+      <label for="PSF_CT">
+        <input type="checkbox" id="PSF_CT" value="HRFCT" class="teams"> PSF Core Team
+      </label>
+      <br>
+      <label for="MSL_CT">
+        <input type="checkbox" id="MSL_CT" value="SFCT" class="teams"> Sequim Core Team
+      </label>
+      <br>
+      <label for="CFCT_CT">
+        <input type="checkbox" id="CFCT_CT" value="CFCT" class="teams"> Leased Facilities Core Team
+      </label>
+      <br>
+      <label for="GSICT_CT">
+        <input type="checkbox" id="GSICT_CT" value="GSICT" class="teams"> Central Operations Core Team
+      </label>
+      <br>
+      <label for="PFCT_CT">
+        <input type="checkbox" id="PFCT_CT" value="PFCT" class="teams"> Richland Facilities Core Team 1
+      </label>
+      <br>
+      <label for="RFCT3_CT">
+        <input type="checkbox" id="RFCT3_CT" value="RFCT3" class="teams"> Richland Facilities Core Team 2
+      </label>
+      <br>
+      <label for="UFCT_CT">
+        <input type="checkbox" id="UFCT_CT" value="UFCT" class="teams"> Richland Facilities Core Team 3
+      </label>
+      <br>
+      <!-- SOUTH CORE TEAMS INCLUDE CFCT, GSICT, PFCT, RFCT3, UFCT; THERE ARE OTHER CORE TEAMS TOO -->
+    </div>
+ 
+    <div class="input-group">
+      <label for="wtlCheckboxes"><strong>Work Team Leads</strong></label><br>
+      <span><i>Leave this blank to search all WTLs. Otherwise, select the WTLs you need
+      </i></span><br>
+      <label for="Josh_Henn">
+        <input type="checkbox" id="Josh_Henn" value="913053" class="leads"> Josh Henn (300A)
+      </label>
+      <br>
+      <label for="Nash_Hay">
+        <input type="checkbox" id="Nash_Hay" value="900277" class="leads"> Nash Hay (300A)
+      </label>
+      <br>
+      <label for="Joe_Gill">
+        <input type="checkbox" id="Joe_Gill" value="907047" class="leads"> Joe Gill (300A Fab)
+      </label> 
+      <br>
+      <label for="Jessey_Brown">
+        <input type="checkbox" id="Jessey_Brown" value="3P292" class="leads"> Jessey Brown (Power OP)
+      </label>
+      <br>
+      <label for="Trevor_King">
+        <input type="checkbox" id="Trevor_King" value="903079" class="leads"> Trevor King (PSF)
+      </label> 
+      <br>
+      <label for="custom_wtl">
+        <input type="checkbox" class="ccustom" id="custom_wtl"> Custom WTL (Enter Valid PNNLID) <input type="text" class="custom" id="name-input"
+          placeholder="PNNL ID Only" enabled>
+      </label>
+    </div>
+  
+    <div class="input-group">
+      <label for="spec_craftCheckboxes"><strong>Power Operator & Air Balance Craft in Search</strong></label><br>
+      <span><i>Provides the option to exclude the Power Operator & Air Balance Craft
+      </i></span><br>
+      <label for="powerOp_airBal">
+        <input type="checkbox" id="powerOp_airBal" value="yes" class="airbal"> Do not include
+      </label>
+    </div>
+
+    <div class="input-group">
+      <label for="months_weekly_WO"><strong>Include the month's weekly WOs</strong></label><br>
+      <span><i>Provides the option to only search all the PMs due in that month alone
+      </i></span><br>
+      <label for="weekly">
+        <input type="checkbox" id="weekly" value="yes" class="weekly"> Yes, include
+      </label>
+    </div>
+
+    <div class="input-group">
+      <label for="History_Checkboxes"><strong>Phase of the WO</strong></label><br>
+      <span><i> N/A: Excludes closed WO 1: Only closed and canceled WO 
+      </i></span><br>
+      <label for="History">
+        <input type="checkbox" id="History" value="yes" class="History"> 1
+      </label>
+    </div>
+
+
+    <hr> <!-- Header Line -->
+
+
+    <!-- Status Checkboxes -->
+    <br>
+    <div class="input-group">
+      <label for="statusCheckboxes"><strong>Phase(s):</strong></label><br>
+      <span class="description"><i>Leave this blank to search for all phases. Otherwise, select the phases you
+        need.</i></span>
+      <label for="status_be_review">
+        <input type="checkbox" id="status_be_review" value="BE REVIEW" class="status"> BE REVIEW
+      </label>
+      <br>
+      <label for="status_cancelled">
+        <input type="checkbox" id="status_cancelled" value="CANCELLED" class="status"> CANCELLED
+      </label>
+      <br>
+      <label for="status_closed">
+        <input type="checkbox" id="status_closed" value="CLOSED" class="status"> CLOSED
+      </label>
+      <br>
+      <label for="status_complete">
+        <input type="checkbox" id="status_complete" value="COMPLETE" class="status"> COMPLETE
+      </label>
+      <br>
+      <label for="status_field_verif">
+        <input type="checkbox" id="status_field_verif" value="FIELD VERIFICATION" class="status"> FIELD VERIFICATION
+      </label>
+      <br>
+      <label for="status_pod">
+        <input type="checkbox" id="status_pod" value="PLAN OF THE DAY" class="status"> PLAN OF THE DAY
+      </label>
+      <br>
+      <label for="status_planning">
+        <input type="checkbox" id="status_planning" value="PLANNING" class="status"> PLANNING
+      </label>
+      <br>
+      <label for="status_pre_work_review">
+        <input type="checkbox" id="status_pre_work_review" value="PRE WORK REVIEW" class="status"> PRE WORK REVIEW
+      </label>
+      <br>
+      <label for="status_request">
+        <input type="checkbox" id="status_request" value="REQUEST" class="status"> REQUEST
+      </label>
+      <br>
+      <label for="status_scheduling">
+        <input type="checkbox" id="status_scheduling" value="SCHEDULING" class="status"> SCHEDULING
+      </label>
+      <br>
+      <label for="status_undefined">
+        <input type="checkbox" id="status_undefined" value="UNDEFINED" class="status"> UNDEFINED
+      </label>
+      <br>
+      <label for="status_working">
+        <input type="checkbox" id="status_working" value="WORKING" class="status"> WORKING
+      </label>
+    </div>
+
+    <hr> <!-- Header Line -->
+
+    <!-- Button to generate Where Clause -->
+    <h3>Generated Where Clause:</h3>
+    <div>
+    <button3 type="button" onclick="generateWhereClause()">Generate Where Clause</button3>
+    <span class="smQM" id="questionMark1">?</span>
+    </div>
+    <div class="info-text" id="infoText1"> Click "Generate Where Clause" to generate the Where Clause below. You can also press <strong>Enter</strong> on your Keyboard
+    </div>
+    <br>
+    <textarea id="whereClause" readonly></textarea>
+    <div>
+    <button3 onclick="copyToClipboard()">Copy to Clipboard</button3>
+    <span class="smQM" id="questionMark2">?</span>
+    </div>
+    <div class="info-text" id="infoText2"> Click "Copy to Clipboard" to copy the Generated Where Clause above. You can also press <strong>Shift + Enter</strong> on your Keyboard
+    </div>
+
+  </form>
+  <br>
+  <footer></footer>
+  </div>
+
+  <!-- JavaScript Code for this HTML -->
+  <script>
+    function pastdate() {
+      const currentDate = new Date().toISOString().slice(0, 10);
+
+      // Extract year and month components
+      const currentYear = currentDate.slice(0, 4);
+      const currentMonth = currentDate.slice(5, 7);
+
+      // Calculate the next month and year, handling rollover to the next year
+      let lastMonth = Number(currentMonth) - 1;
+      let lastYear = currentYear;
+
+      if (lastMonth == 0) {
+        lastMonth = 12;
+        lastYear = Number(currentYear) - 1;
+      }
+
+      // Pad the month with a leading zero if necessary
+      lastMonth = String(lastMonth).padStart(2, '0');
+
+      // Determine the number of days in the next month, considering leap years
+      const isLeapYear = lastYear % 4 === 0 && (lastYear % 100 !== 0 || lastYear % 400 === 0);
+      const daysInMonth = lastMonth === '02' ? 28 + isLeapYear : 30 + (lastMonth % 2); // Shorter version for month lengths
+
+      // Construct the first and last days of the next month in YYYY-MM-DD format
+      const date = {};
+      date.firstDay = `${lastYear}-${lastMonth}-01`;
+      date.lastDay = `${lastYear}-${lastMonth}-${daysInMonth}`;
+      alert(date.firstDay + " to " + date.lastDay);
+    }
+
+    function currentdate() {
+      const currentDate = new Date().toISOString().slice(0, 10);
+
+      // Extract year and month components
+      const currentYear = currentDate.slice(0, 4);
+      const currentMonth = currentDate.slice(5, 7);
+
+      // Pad the month with a leading zero if necessary
+      currentMonth = String(currentMonth).padStart(2, '0');
+
+      // Determine the number of days in the next month, considering leap years
+      const isLeapYear = currentYear % 4 === 0 && (currentYear % 100 !== 0 || currentYear % 400 === 0);
+      const daysInMonth = currentMonth === '02' ? 28 + isLeapYear : 30 + (currentMonth % 2); // Shorter version for month lengths
+
+      // Construct the first and last days of the next month in YYYY-MM-DD format
+      const date = {};
+      date.firstDay = `${currentMonth} ${currentYear}`;
+      date.lastDay = `${currentMonth} ${currentYear}`;
+      alert(date.firstDay + " to " + date.lastDay);
+    }
+
+    function nextdate() {
+      // Calculate the next month and year, handling rollover to the next year
+      let nextMonth = Number(currentMonth) + 1;
+      let nextYear = currentYear;
+      if (nextMonth > 12) {
+        nextMonth = 1;
+        nextYear = Number(currentYear) + 1;
+      }
+
+      // Pad the month with a leading zero if necessary
+      nextMonth = String(nextMonth).padStart(2, '0');
+
+      // Determine the number of days in the next month, considering leap years
+      const isLeapYear = nextYear % 4 === 0 && (nextYear % 100 !== 0 || nextYear % 400 === 0);
+      // const daysInMonth = nextMonth === '02' ? 28 + isLeapYear : 30 + (nextMonth % 2); // Shorter version for month lengths
+          switch (nextMonth) {
+        case 2:
+            daysInMonth = 28 + isLeapYear;
+            break;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+            daysInMonth = 30;
+            break;
+        default:
+            daysInMonth = 34;
+    }
+
+      // Construct the first and last days of the next month in YYYY-MM-DD format
+      const date = {};
+      date.firstDay = `${nextYear}-${nextMonth}-01`;
+      date.lastDay = `${nextYear}-${nextMonth}-${daysInMonth}`;
+      alert(date.firstDay + " to " + date.lastDay);
+    }
+
+    const currentDate = new Date().toISOString().slice(0, 10);
+
+// Extract year and month components
+function clearAllFields() {
+      document.querySelectorAll('input[type="checkbox"].teams').forEach(checkbox => {
+        checkbox.checked = false;
+      });
+      document.getElementById('whereClause').value = '';
+      document.querySelectorAll('input[type="checkbox"].leads').forEach(checkbox => {
+        checkbox.checked = false;
+      });
+      document.getElementById('whereClause').value = '';
+    }      
+const currentYear = currentDate.slice(0, 4);
+const currentMonth = currentDate.slice(5, 7);
+    function check300C(){
+      clearAllFields();
+      document.getElementById('300A_CT').checked = true;
+      document.getElementById('checkdate').checked = true;
+      //alert('start')
+      const currentfulldate = new Date().toISOString().slice(0, 10);
+      const currentyearmonth = currentfulldate.slice(0, 7);
+      //alert(currentyearmonth)
+      document.getElementById('selectedDate').value = currentyearmonth
+    }
+    function checkPSFC(){
+      clearAllFields();
+      document.getElementById('PSF_CT').checked = true;
+      document.getElementById('checkdate').checked = true;
+      //alert('start')
+      const currentfulldate = new Date().toISOString().slice(0, 10);
+      const currentyearmonth = currentfulldate.slice(0, 7);
+      //alert(currentyearmonth)
+      document.getElementById('selectedDate').value = currentyearmonth
+    }
+    function check300N(){
+      clearAllFields();
+      document.getElementById('300A_CT').checked = true;
+      document.getElementById('checkdate').checked = true;
+      let nextMonth = Number(currentMonth) + 1;
+      let nextYear = currentYear;
+      if (nextMonth > 12) {
+        nextMonth = 1;
+        nextYear = Number(currentYear) + 1;
+      }
+      nextMonth = String(nextMonth).padStart(2, '0');
+      const nextyearmonth = new String(nextYear + '-' + nextMonth);
+      document.getElementById('selectedDate').value = nextyearmonth
+    }
+    function checkPSFN(){
+      clearAllFields();
+      document.getElementById('PSF_CT').checked = true;
+      document.getElementById('checkdate').checked = true;
+      let nextMonth = Number(currentMonth) + 1;
+      let nextYear = currentYear;
+      if (nextMonth > 12) {
+        nextMonth = 1;
+        nextYear = Number(currentYear) + 1;
+      }
+      nextMonth = String(nextMonth).padStart(2, '0');
+      const nextyearmonth = new String(nextYear + '-' + nextMonth);
+      document.getElementById('selectedDate').value = nextyearmonth
+    }
+    function check300P(){
+      clearAllFields();
+      document.getElementById('300A_CT').checked = true;
+      document.getElementById('checkdate').checked = true;
+      let nextMonth = Number(currentMonth) - 1;
+      let nextYear = currentYear;
+      if (nextMonth == 0) {
+        nextMonth = 12;
+        nextYear = Number(currentYear) - 1;
+      }
+      nextMonth = String(nextMonth).padStart(2, '0');
+      const nextyearmonth = new String(nextYear + '-' + nextMonth);
+      document.getElementById('selectedDate').value = nextyearmonth
+    }
+    function checkPSFP(){
+      clearAllFields();
+      document.getElementById('PSF_CT').checked = true;
+      document.getElementById('checkdate').checked = true;
+      let nextMonth = Number(currentMonth) - 1;
+      let nextYear = currentYear;
+      if (nextMonth == 0) {
+        nextMonth = 12;
+        nextYear = Number(currentYear) - 1;
+      }
+      nextMonth = String(nextMonth).padStart(2, '0');
+      const nextyearmonth = new String(nextYear + '-' + nextMonth);
+      document.getElementById('selectedDate').value = nextyearmonth
+    }
+    function checkcustomP(){
+      document.getElementById('checkdate').checked = true;
+      let nextMonth = Number(currentMonth) - 1;
+      let nextYear = currentYear;
+      if (nextMonth == 0) {
+        nextMonth = 12;
+        nextYear = Number(currentYear) - 1;
+      }
+      nextMonth = String(nextMonth).padStart(2, '0');
+      const nextyearmonth = new String(nextYear + '-' + nextMonth);
+      document.getElementById('selectedDate').value = nextyearmonth
+    }
+    function checkcustomC(){
+      document.getElementById('checkdate').checked = true;
+      const currentfulldate = new Date().toISOString().slice(0, 10);
+      const currentyearmonth = currentfulldate.slice(0, 7);
+      //alert(currentyearmonth)
+      document.getElementById('selectedDate').value = currentyearmonth
+    }
+    function checkcustomN(){
+      document.getElementById('checkdate').checked = true;
+      let nextMonth = Number(currentMonth) + 1;
+      let nextYear = currentYear;
+      if (nextMonth > 12) {
+        nextMonth = 1;
+        nextYear = Number(currentYear) + 1;
+      }
+      nextMonth = String(nextMonth).padStart(2, '0');
+      const nextyearmonth = new String(nextYear + '-' + nextMonth);
+      document.getElementById('selectedDate').value = nextyearmonth
+    }
+
+
+
+    window.addEventListener('load', function () {
+      let questionMarks = document.querySelectorAll('.question-mark, .smQM'); // Include both regular and small question marks
+      let infoTexts = document.querySelectorAll('.info-text');
+      let activeIndex = null;
+
+      questionMarks.forEach(function (questionMark, index) {
+        questionMark.addEventListener('click', function () {
+          if (activeIndex !== null) {
+            infoTexts[activeIndex].style.display = 'none';
+            questionMarks[activeIndex].classList.remove('glow');
+          }
+
+          if (activeIndex !== index) {
+            infoTexts[index].style.display = 'block';
+            questionMarks[index].classList.add('glow');
+            activeIndex = index;
+          } else {
+            activeIndex = null;
+          }
+        });
+      });
+    });
+    window.addEventListener('load', function () {
+      let questionMarks = document.querySelectorAll('.question-mark' || ".smQM");
+      let infoTexts = document.querySelectorAll('.info-text');
+      let activeIndex = null;
+
+      questionMarks.forEach(function (questionMark, index) {
+        questionMark.addEventListener('click', function () {
+          if (activeIndex !== null) {
+            infoTexts[activeIndex].style.display = 'none';
+            questionMarks[activeIndex].classList.remove('glow');
+          }
+
+          if (activeIndex !== index) {
+            infoTexts[index].style.display = 'block';
+            questionMarks[index].classList.add('glow');
+            activeIndex = index;
+          } else {
+            activeIndex = null;
+          }
+        });
+      });
+    });
+
+    // Everything below this is related to generating the where clause
+    function generateWhereClause() {
+      // Retrive valuves from the inputs
+      function sanitizeInput(input) {
+        // Remove extra spaces, leading/trailing commas, and invalid characters
+        return input
+          .replace(/\s+/g, ' ')       // Remove extra spaces
+          .replace(/(^,|,$)/g, '')    // Remove leading/trailing commas
+          .replace(/[\^*~.!@#]/g, '')  // Remove invalid characters (^ * ~ . ! @ #)
+          .split(',')
+          .filter(item => item.trim() !== '') // Remove empty items after splitting
+          .join(',');
+      } 
+      let whereClause = `((woclass = 'WORKORDER' or woclass = 'ACTIVITY') `;
+      // Good
+      const selectedteamsStatuses = [];
+      let checkboxes = document.querySelectorAll('input[type="checkbox"].teams:checked');
+      checkboxes.forEach(checkbox => {
+        selectedteamsStatuses.push(checkbox.value);
+      });
+
+      if (selectedteamsStatuses.length != 0) {
+        whereClause += '\nand (pnl_coreteam='
+        whereClause += selectedteamsStatuses.map(status => `'${status}'`).join(' or pnl_coreteam=');
+        whereClause += ')\n';
+      }
+      // Good
+     /* whereClause += 'and historyflag = 0\n';
+      whereClause += 'and istask = 0\n';
+      For another day if needed
+      */
+     //good
+     const selectedHistory = [];
+      checkboxes = document.querySelectorAll('input[type="checkbox"].History:checked');
+      checkboxes.forEach(checkbox => {
+        selectedHistory.push(checkbox.value);
+      });
+      if (selectedHistory.length != 0) {
+        whereClause += 'and ';
+        whereClause += selectedHistory.map(status => `historyflag = 1`).join(' or ');
+        whereClause += '\n'
+      };
+      if (selectedHistory.length == 0) {
+        whereClause += 'and ';
+        whereClause +=  `historyflag = 0`;
+        whereClause += '\n'
+      };
+
+      whereClause += `and siteid = 'PNNLSITE'`;
+      whereClause += ')\n';
+
+      // Check with Randy but works
+      const selectedleadsStatuses = [];
+      checkboxes = document.querySelectorAll('input[type="checkbox"].leads:checked');
+      checkboxes.forEach(checkbox => {
+        selectedleadsStatuses.push(checkbox.value);
+      });
+      const selectedcustomStatuses = [];
+      checkboxes = document.querySelectorAll('input[type="text"].custom');
+      checkboxes.forEach(checkbox => {
+        selectedcustomStatuses.push(checkbox.value);
+      });
+
+      const selectedccustomStatuses = [];
+      checkboxes = document.querySelectorAll('input[type="checkbox"].ccustom:checked');
+      checkboxes.forEach(checkbox => {
+        selectedccustomStatuses.push(checkbox.value);
+      });
+
+      n=0;
+
+      if (selectedleadsStatuses.length != 0) {
+        whereClause += 'and ';
+        whereClause += selectedleadsStatuses.map(status => `lead = '${status}'`).join(' or ');
+      // Good   
+      if (selectedccustomStatuses.length != 0) {
+        whereClause += ' or ';
+        whereClause += selectedcustomStatuses.map(status => `lead = '${status}'`).join(' or ');
+        n=1;
+      };
+        whereClause += '\n';        
+      }
+      // Good
+      if (selectedccustomStatuses.length != 0 && n==0) {
+        whereClause += 'and ';
+        whereClause += selectedcustomStatuses.map(status => `lead = '${status}'`).join(' or ');
+        whereClause += '\n';
+      };
+      n=0;
+      // Good
+      const selectedairbalStatuses = [];
+      checkboxes = document.querySelectorAll('input[type="checkbox"].airbal:checked');
+      checkboxes.forEach(checkbox => {
+        selectedairbalStatuses.push(checkbox.value);
+      });
+      if (selectedairbalStatuses.length != 0) {
+        whereClause += 'and ';
+        whereClause += selectedairbalStatuses.map(status => `craft not in ('R070', 'R076')`).join(' or ');
+        whereClause += '\n';
+      }
+
+      // Not yet
+      const selectedWeeklyStatuses = [];
+      checkboxes = document.querySelectorAll('input[type="checkbox"].weekly:checked');
+      checkboxes.forEach(checkbox => {
+        selectedWeeklyStatuses.push(checkbox.value);
+      });
+      weeklyholder=0;
+      if (selectedWeeklyStatuses.length != 0) {
+        weeklyholder=1;
+      }
+
+      // Good
+      const selectedStatuses = [];
+      checkboxes = document.querySelectorAll('input[type="checkbox"].status:checked');
+      checkboxes.forEach(checkbox => {
+        selectedStatuses.push(checkbox.value);
+      });
+      if (selectedStatuses.length != 0) {
+        whereClause += 'and (';
+        whereClause += selectedStatuses.map(status => `upper(pnl_wophase) = '${status}'`).join(' or ');
+        whereClause += ')\n'
+      };
+
+      // Close
+      const selectedtimeStatuses = [];
+      checkboxes = document.querySelectorAll('input[type="month"].time');
+      checkboxes.forEach(checkbox => {
+        selectedtimeStatuses.push(checkbox.value);})
+        
+      const selectedcheckdateStatuses = [];
+      checkboxes = document.querySelectorAll('input[type="checkbox"].checkdate:checked');
+      checkboxes.forEach(checkbox => {
+        selectedcheckdateStatuses.push(checkbox.value);})
+
+      if (selectedcheckdateStatuses != 0) {
+        
+        const selecteddate = String(selectedtimeStatuses);
+        //type="month" min="2017-01" max="2030-12" id="selectedDate" name="selectedDate" class="time">
+// Extract year and month components
+//alert(selecteddate);
+const currentYear = selecteddate.slice(0, 4);
+const currentMonth = selecteddate.slice(5, 8);
+//alert(currentYear + currentMonth)
+// Not Needed. This doesn't do anything anyways - Commented out on Oct 3 2024
+// //Pad the month with a leading zero if necessary
+// currentMonth = String(selecteddate).padStart(2, '0');
+
+// Determine the number of days in the next month, considering leap years
+const isLeapYear = currentYear % 4 === 0 && (currentYear % 100 !== 0 || currentYear % 400 === 0);
+// const daysInMonth = currentMonth === '02' ? 28 + isLeapYear : 30 + (currentMonth % 2); // Shorter version for month lengths
+switch (Number(currentMonth)) {
+        case 2:
+            daysInMonth = 28 + isLeapYear;
+            break;
+        case 4, 6, 9, 11:
+            daysInMonth = 30;
+            break;
+        default:
+            daysInMonth = 31;
+    }
+//alert(daysInMonth)
+// Construct the first and last days of the next month in YYYY-MM-DD format
+const date = {};
+date.firstDay = `${currentYear}-${currentMonth}-01`;
+date.lastDay = `${currentYear}-${currentMonth}-${daysInMonth}`;
+//alert(date.firstDay + " to " + date.lastDay);
+        if(weeklyholder==1){
+          let lastMonth = Number(currentMonth) - 1;
+          let lastYear = currentYear;
+          //alert(lastMonth +" and "+ lastYear);
+          if (lastMonth == 0) {
+            lastMonth = 12;
+            lastYear = lastYear - 1;
+            }
+            
+            // Pad the month with a leading zero if necessary
+            lastMonth = String(lastMonth).padStart(2, '0');
+            //alert(lastMonth)
+            // Determine the number of days in the next month, considering leap years
+            daysInlastMonth = lastMonth === '02' ? 28 + isLeapYear : 30 + (lastMonth % 2); // Shorter version for month lengths
+            //alert(daysInlastMonth);
+            daysInlastMonth=Number(daysInlastMonth)-7;
+            //alert(daysInlastMonth);
+            // Construct the first and last days of the next month in YYYY-MM-DD format
+            datepast = {};
+            datepast.firstDay = `${lastYear}-${lastMonth}-${daysInlastMonth}`;
+           // alert(datepast.firstDay);
+
+            let nextMonth = Number(currentMonth) + 1 ;
+            let nextYear = currentYear;
+            //alert(nextMonth);
+          if (nextMonth == 13) {
+            nextMonth = 1;
+            nextYear = Number(currentYear) + 1;
+            }
+            nextMonth = String(nextMonth).padStart(2, '0');
+            // Construct the first and last days of the next month in YYYY-MM-DD format
+            datepast.lastDay = `${nextYear}-${nextMonth}-07`;
+            //alert(datepast.lastDay);                        
+        }
+        whereClause += 'and ';
+        if(weeklyholder==0){
+        whereClause += selectedtimeStatuses.map(status => `pmduedate >= { d '${date.firstDay}' } and pmduedate <= { d '${date.lastDay}'}`).join(' or ');}
+        else{
+        whereClause += selectedtimeStatuses.map(status => `pmduedate >= { d '${datepast.firstDay}' } and pmduedate <= { d '${datepast.lastDay}'}`).join(' or ');}
+        whereClause += '\n'
+      };
+      
+      weeklyholder=0;
+      // Start of creating the Where Clause
+
+      // Set the generated where clause to the text area
+      document.getElementById('whereClause').value = whereClause;
+
+      const notification = document.getElementById('notification');
+      notification.textContent = 'Where Clause Generated!';
+      notification.style.display = 'block';
+      // Automatically hide the notification after a few seconds
+      setTimeout(function () {
+        notification.style.display = 'none';
+      }, 1000); // 1000 milliseconds (1 seconds)
+
+    }
+    //Copy to clipboard function
+    function copyToClipboard() {
+      event.preventDefault();
+      const textarea = document.getElementById('whereClause');
+      textarea.select();
+      document.execCommand('copy');
+      const notification = document.getElementById('notification');
+      notification.textContent = 'Where Clause copied to Clipboard!';
+      notification.style.display = 'block';
+
+      // Automatically hide the notification after a few seconds
+      setTimeout(function () {
+        notification.style.display = 'none';
+      }, 3000); // 3000 milliseconds (3 seconds)
+    }
+
+
+  </script>
+
+</body>
+
+</html>
